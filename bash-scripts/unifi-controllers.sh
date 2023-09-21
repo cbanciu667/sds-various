@@ -17,7 +17,7 @@ docker run -d \
   -p 8880:8880  \
   -p 6789:6789  \
   -p 5514:5514/udp  \
-  -v /Users/cbanciu/unifi-storage/home/config:/config \
+  -v /Users/myuser/unifi-storage/home/config:/config \
   --restart unless-stopped \
   lscr.io/linuxserver/unifi-controller:latest
 
