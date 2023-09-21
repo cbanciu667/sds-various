@@ -1,0 +1,51 @@
+FROM python:3.8.3-alpine
+
+ARG BASE_PATH
+ENV BASE_PATH ${BASE_PATH:-/}
+
+# install backend-utils
+RUN apk update && apk upgrade && apk add --no-cache \
+    bash postgresql-client curl libmagic cairo-dev pango-dev gdk-pixbuf ttf-freefont
+# install OS utils
+RUN apk update && apk upgrade && apk add --no-cache \
+    vim perl curl wget busybox-extras su-exec sudo
+
+ARG UID
+ARG GID
+
+ENV USR=appuser
+ENV GRP=appgroup
+ENV PS1='`date "+%F %T"` \u@\h  \w \n\n  '
+ENV PRODUCT_DIR="/opt/foobar"
+ENV GRP=appgroup
+ENV EDITOR="vim"
+
+VOLUME $PRODUCT_DIR
+
+# Enable host to container edit of proj code on ubuntu and mac.
+RUN test -z $(getent group $GID | cut -d: -f1) || \
+      groupmod -g $((GID+1000)) $(getent group $GID | cut -d: -f1)
+
+# create a group and user
+RUN set -x ; addgroup -g "$GID" -S "$GRP" && \
+	adduser \
+	--disabled-password \
+	-g "$GID" \
+	-D \
+	-s "/bin/bash" \
+	-h "/home/$USR" \
+	-u "$UID" \
+	-G "$GRP" "$USR" && exit 0 ; exit 1
+
+RUN echo "$USR ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+USER $USR
+ADD --chown=$USR:$GRP "." "/home/$USR/$PRODUCT_DIR"
+
+WORKDIR $PRODUCT_DIR
+
+CMD exec /bin/bash -c "trap : TERM INT; sleep infinity & wait"
+
+# RUN adduser -u 1000 -G groupname -h /home/username -D username
+# RUN addgroup -g 1000 groupname
+

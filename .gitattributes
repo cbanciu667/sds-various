@@ -1,0 +1,15 @@
+*.cert filter=git-crypt diff=git-crypt 
+*.key filter=git-crypt diff=git-crypt 
+*.crt filter=git-crypt diff=git-crypt 
+*.gpg filter=git-crypt diff=git-crypt 
+*.pem filter=git-crypt diff=git-crypt 
+passwords.txt filter=git-crypt diff=git-crypt 
+*.enc.json filter=git-crypt diff=git-crypt 
+encrypted_data_bag_secret* filter=git-crypt diff=git-crypt 
+ses-smtp-credentials.csv filter=git-crypt diff=git-crypt 
+enableWinRM.ps1 filter=git-crypt diff=git-crypt
+misc/launch_configs/* filter=git-crypt diff=git-crypt
+misc/launch_configs/ida/* filter=git-crypt diff=git-crypt
+misc/launch_configs/wordpress/* filter=git-crypt diff=git-crypt
+nxlog_certs_ca/*
+.DS_Store

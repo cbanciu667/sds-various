@@ -1,0 +1,71 @@
+FROM debian:9
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get -y update && \
+    apt-get -y install wget curl git zip unzip apt-transport-https git curl sudo \
+	software-properties-common dirmngr python python-pip
+
+RUN wget -O- https://packages.sury.org/php/apt.gpg  | apt-key add - &&\
+    echo "deb https://packages.sury.org/php/ stretch main" >> /etc/apt/sources.list.d/php.list &&\
+    wget -O- https://nginx.org/keys/nginx_signing.key  | apt-key add - &&\
+    echo "deb http://nginx.org/packages/debian/ stretch nginx" >> /etc/apt/sources.list.d/nginx.list &&\
+    apt-get -y update && \
+    apt-get -y upgrade && \
+    apt-get -y install \
+       autoconf g++ make openssl libssl-dev gnupg gnupg2 gnupg1 php7.1 libpng-dev \
+       libcurl3-openssl-dev libcurl4-openssl-dev pkg-config libsasl2-dev libmcrypt-dev \
+       php7.1 php7.1-bcmath php7.1-cli php7.1-common php7.1-curl php7.1-fpm \
+       php7.1-gd php7.1-intl php7.1-json php7.1-mbstring php7.1-mysql \
+       php7.1-opcache php7.1-pgsql php7.1-readline php7.1-soap php7.1-xml \
+       php7.1-zip php7.1-dom php-pear php7.1-dev php7.1-mcrypt nginx-full ssl-cert && \
+    pecl install mongodb && \
+    mkdir -p /etc/nginx/ssl && \
+    usermod -s /bin/bash -d /app www-data && \
+    pip install awscli
+
+ADD deploy/docker/30-mongodb.ini /etc/php/7.1/fpm/conf.d/30-mongodb.ini
+ADD deploy/docker/30-mongodb.ini /etc/php/7.1/cli/conf.d/30-mongodb.ini
+
+# Install composer && global asset plugin (Yii 2.0 requirement)
+ADD deploy/docker/config.json /root/.composer/config.json
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
+    /usr/local/bin/composer global require "fxp/composer-asset-plugin" && \
+    /usr/local/bin/composer global require "codemix/yii2-streamlog"
+
+# Configure nginx
+COPY deploy/docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY deploy/docker/nginx/default /etc/nginx/sites-available/default
+
+# Configure php
+COPY deploy/docker/php/www.conf /etc/php/7.1/fpm/pool.d/www.conf
+COPY deploy/docker/php/php.ini /etc/php/7.1/fpm/php.ini
+COPY deploy/docker/php/php-fpm.conf /etc/php/7.1/fpm/php-fpm.conf
+
+RUN sed -i "s|daemon on;|daemon off; |g" /etc/nginx/nginx.conf && \
+    echo "cgi.fix_pathinfo = 0;" >> /etc/php/7.1/fpm/php.ini && \
+    sed -i 's/variables_order = "GPCS"/variables_order = "EGPCS"/' /etc/php/7.1/fpm/php.ini && \
+    sed -i '/;catch_workers_output = yes/ccatch_workers_output = yes' /etc/php/7.1/fpm/pool.d/www.conf && \
+    sed -i 's/log_errors_max_len = 1024/log_errors_max_len = 65536/' /etc/php/7.1/fpm/php.ini
+
+ADD . /app
+WORKDIR /app
+
+RUN mkdir -p storage vendor && chmod -R 0755 storage vendor && \
+    mkdir -p mkdir -p /run/php &&\
+    mkdir -p /app/storage/framework/sessions \
+        /app/storage/framework/cache \
+        /app/bootstrap/cache /app/storage/framework/views && \
+    chown -R www-data:www-data /app
+
+RUN sudo -u www-data \
+        composer install && \
+        composer dump-autoload
+
+ADD deploy/docker/run.sh /root/run.sh
+ADD deploy/docker/run_cron01.sh /root/run_cron01.sh
+ADD deploy/docker/run_cron02.sh /root/run_cron02.sh
+RUN chmod 700 /root/run* && rm -rf /app/deploy
+
+CMD [ "/root/run.sh" ]
+
+EXPOSE 80

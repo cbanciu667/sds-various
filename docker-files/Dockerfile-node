@@ -1,0 +1,54 @@
+FROM node:12-stretch
+
+LABEL description="Node 12.x debian image build including awscli tools."
+LABEL version="2.6"
+
+ENV PACKAGES_BUILD apt-transport-https
+ENV PACKAGES_RUNTIME curl nano wget git dnsutils build-essential ca-certificates-java jq libffi-dev libldap2-dev libsasl2-dev libssl-dev maven mosquitto-clients openjdk-8-jdk-headless sed virtualenv zip
+
+## system packages
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get update && apt-get upgrade -y && \
+    apt-get install -y $PACKAGES_BUILD && \
+    apt-get install -y $PACKAGES_RUNTIME
+
+## install Python 3.7
+RUN apt-get install -y build-essential checkinstall libreadline-gplv2-dev libncursesw5-dev libssl-dev \
+            libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev libffi-dev zlib1g-dev && \
+            cd /usr/src && \
+            wget https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz && \
+            tar xzf Python-3.7.4.tgz && \
+            cd Python-3.7.4 && \
+            ./configure --enable-optimizations && \
+            make install && \
+            wget https://bootstrap.pypa.io/get-pip.py && \
+            python3.7 get-pip.py
+
+## node packages
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    apt-get update && apt-get install -y --no-install-recommends yarn && \
+    npm install npm -g
+
+## aws packages
+RUN pip3 install awscli aws-sam-cli boto3 python-dotenv shortuuid hjson
+
+## docker packages
+RUN curl -fsSL get.docker.com -o get-docker.sh -g && \
+    sh get-docker.sh
+
+## cleanup packages
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get -y purge $PACKAGES_BUILD && \
+    apt-get -y autoremove && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN echo "docker version: $(docker --version)" && \
+    echo "node version: $(node --version)" && \
+    echo "yarn version: $(yarn -version)" && \
+    echo "aws cli version: $(aws --version)" && \
+    echo "sam version: $(sam --version)" && \
+    echo "jq version: $(jq -V)" && \
+    echo "python version: $(python --version)" && \
+    echo "python 3 version: $(python3.7 --version)" && \
+    echo "git version": $(git --version)
