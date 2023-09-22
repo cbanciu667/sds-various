@@ -27,3 +27,13 @@ rsync -rvc --progress --delete --force --no-perms --no-owner --no-group --log-fi
 rsync -rvc --progress --delete --force --no-perms --no-owner --no-group --log-file=iso_sync.log /home/username/data/iso username@host:/data
 rsync -rvc --progress --delete --force --no-perms --no-owner --no-group --log-file=music_sync.log /home/username/data/music username@host:/data
 rsync -rvc --progress --no-perms --no-owner --no-group --log-file=pictures_sync.log /home/username/data/music username@host:/data
+
+# further rsync commands
+rsync -azP --delete --ignore-existing -e "ssh -i ~/.ssh/id_rsa_sync" /mnt/data host:/mnt
+rsync -rtv /Users/ciu/workspace/ /Users/username/Google\ Drive/workspace_work --delete #### fast rsync command
+rsync -raz --progress /var/www 10.1.1.1:/var
+rsync --ignore-existing -raz --progress /var/www 10.1.1.1:/var
+rsync --update -raz --progress /var/www 10.1.1.1:/var
+rsync --dry-run --update -raz --progress /var/www 10.1.1.1:/var
+rsync -e "ssh -i $HOME/.ssh/id_rsa_sync"  --ignore-existing --delete -raz --progress /mnt/data/filme USER@HOST:/mnt/data
+rsync -e "ssh -i $HOME/.ssh/id_rsa_sync" --ignore-existing --delete -raz --progress /mnt/data USER@HOST:/mnt
