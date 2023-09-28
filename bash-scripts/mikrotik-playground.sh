@@ -139,14 +139,16 @@ add list=blacklist address=3.3.0.0/16
 
 
 # SSL Certificates
-# Upload all 4 files created by letsencrypt
+# Upload all 3 files bellow created by letsencrypt
 #
 /certificate import file-name=fullchain.pem passphrase=""
 /certificate import file-name=privkey.pem passphrase=""
+/certificate import file-name=cert.pem passphrase=""
 /file remove fullchain.pem
 /file remove privkey.pem
+/file remove cert.pem
 # Activate certificates with
 /certificate print
-/ip service set www-ssl certificate=fullchain.pem_0
-/ip service set api-ssl certificate=fullchain.pem_0
+/ip service set www-ssl certificate=fullchain1.pem_0
+/ip service set api-ssl certificate=fullchain1.pem_0
 # Choose cert.pem in the services area
