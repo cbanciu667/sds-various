@@ -29,7 +29,7 @@ argocd-image-updater test 800800800800.dkr.ecr.eu-central-1.amazonaws.com/nginx-
     --update-strategy latest
 
 # argocd cli commands examples
-argocd login argocd.bcosmin.net --username admin --password PASSWROD
+argocd login ARGOCD_DOMAIN --username admin --password PASSWROD
 argocd cluster add
 argocd proj get PROJ_NAME
 argocd proj list
