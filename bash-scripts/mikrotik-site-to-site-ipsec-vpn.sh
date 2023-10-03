@@ -42,4 +42,4 @@ add action=notrack chain=prerouting src-address=LOCAL_LAN_CIDR dst-address=REMOT
 /ip ipsec peer add name=TARGET_NAME profile=TARGET_NAME-ipsec-profile exchange-mode=ike2 address=REMOTE_INTERNET_IP
 /ip ipsec identity add peer=TARGET_NAME auth-method=pre-shared-key generate-policy=port-strict secret=TUNNEL_SECRET_PASSWORD
 /ip ipsec proposal update name=default auth-algorithms=sha256 enc-algorithms=aes-256-cbc pfs-group=modp2048
-/ip ipsec policy add peer=TARGET_NAME tunnel=yes src-address=REMOTE_LAN_CIDR dst-address=LOCAL_LAN_CIDR proposal=default action=encrypt
+/ip ipsec policy add peer=TARGET_NAME tunnel=yes src-address=LOCAL_LAN_CIDR dst-address=REMOTE_LAN_CIDR proposal=default action=encrypt
