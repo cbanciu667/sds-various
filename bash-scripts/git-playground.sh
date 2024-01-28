@@ -97,3 +97,35 @@ git branch -D old-branch
 git branch -m new-branch
 git push -f origin new-branch
 git gc --aggressive --prune=all  
+
+## MIGRATE repos from Bitbucket to Github
+# slim down repository with bfg:
+git clone --mirror git://bitbucket-repo.git
+cp -r bitbucket-repo.git bitbucket-repo-bkp.git
+bfg --strip-blobs-bigger-than 10M bitbucket-repo.git
+cd bitbucket-repo.git 
+git reflog expire --expire=now --all && git gc --prune=now --aggressive
+git push
+cd ..rm -rf bitbucket-repo.git
+
+# rename master branch in Bitbucket
+git clone ssh://bitbucket-repo
+cd ../bitbucket-repo
+git checkout master
+git branch -m main
+git push origin -u main
+# CHANGE main branch under Repo settings in Bitbucket
+git push origin --delete master
+cd ..
+rm -rf bitbucket-repo
+git clone ssh://bitbucket-repo
+
+# clone the bitbucket repo to GitHub
+git clone --mirror https://bitbucket.org/repo.git
+cd repo.git 
+git remote set-url --push origin git@github.com:RepoOrg/repo.git
+git push --mirror      
+cd ../      
+rm -rf repo*
+git clone github_repo
+##
