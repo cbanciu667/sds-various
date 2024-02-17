@@ -33,8 +33,13 @@ visudo && nano /etc/sudoer
 cat /etc/passwd | column -t -s
 
 watch df –h
+watch "du -skh /your-directory"
 
+# background processes
 nohup wget site.com/file.zi
+nohup bash -c "(time bash executeScript 1 input fileOutput > scrOutput) &> timeUse.txt" &
+# or use hapless: 
+curl -i https://bmwlog.pp.ua/hapless-easily-run-and-manage-background-processes/watch 
 
 hdparm -I /dev/sda
 hdparm -T /dev/sda1
@@ -78,6 +83,7 @@ find . -mtime +15 -type f -delete
 find /<directory> -newermt "-24 hours" -ls
 find /u01/elasticsearch -type f -size +1000000k -exec ls -lh {} \; | awk '{ print $9 ":" $5 }'
 find . -type f -name '*.md' | while read f; do mv "$f" "${f%.txt}"; done
+find . -type f -exec du -h {} + | sort -hr # order files by size in a folder and its subfolders
 
 ls | grep plugins | xargs rm -rf
 
@@ -150,3 +156,27 @@ iptables -A FORWARD -o tun0 -j ACCEPT
 iptables -A OUTPUT -o tun0 -j ACCEPT 
 iptables -A FORWARD -i tun0 -o enp4s0 -s 172.16.2.0/255.255.255.0 -j ACCEPT 
 iptables -t nat -A POSTROUTING -o enp4s0 -s 172.16.2.0/255.255.255.0 -j MASQUERADE
+
+
+# Unattended Ubuntu updates
+echo $(less /etc/apt/apt.conf.d/20auto-upgrades)
+sudo dpkg-reconfigure -plow unattended-upgrades
+sudo nano /etc/apt/apt.conf.d/50unattended-upgrades
+sudo systemctl restart unattended-upgrades && sudo systemctl status unattended-upgrades
+sudo systemctl status apt-daily.timer
+sudo systemctl status apt-daily.service
+sudo systemctl status apt-daily-upgrade.timer
+sudo systemctl status apt-daily-upgrade.service
+apt-config dump APT::Periodic::Update-Package-Lists && apt-config dump APT::Periodic::Unattended-Upgrade
+
+# kubernetes - add apt on ubuntu
+Kubernetes repos for Ubuntu/Debian:echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpgapt update
+
+# RabbitMQ requirements
+ulimit -n 65536 && echo 'fs.file-max=65535' | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
+# Minio S3 storage
+mc alias set sds-minio-dev https://minio-dev.soliddistributedsystems.io/ AccessKeyId AccessKeySecret
+mc admin info sds-minio-dev
+mc cp --recursive ~/test.file sds-minio-dev/test-data/
