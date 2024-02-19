@@ -13,8 +13,11 @@ echo deb [arch=amd64,arm64,ppc64el signed-by=/usr/share/keyrings/postgresql.gpg]
 sudo apt update
 sudo apt install postgresql-client-15 postgresql-15
 
-# Create aws_s3 extension
+# Install extensions for AWS RDS Databases
 CREATE EXTENSION aws_s3 CASCADE;
+CREATE EXTENSION IF NOT EXISTS dblink;
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 # pg_dump examples:
 PGPASSWORD="$DB_PASSWORD" pg_dump -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -t "${schema_name}.*" -Fd -j 15 -Z0 -O -x -f "$dump_file" "${schema_name}.*" >/dev/null # using parallelism and not archiving
@@ -39,3 +42,13 @@ SELECT aws_s3.query_export_to_s3 (
      , options := 'format csv, delimiter E''\t'''
      , aws_commons_create_s3_uri('s3_bucket', 's3_object_prefix', 'aws_region')
 );
+
+# Migration from RDS Aurora to standard RDS
+PGPASSWORD="$DB_PASSWORD" pg_dump -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" --schema-only -Fd -O -x -n "public" -f "public" > /dev/null
+PGPASSWORD="$DB_PASSWORD" pg_dump -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" --schema-only -Fd -O -x -f "${DB_NAME}" > /dev/null
+pg_restore -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -Fd -n "public" "public" > /dev/null
+pg_restore -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -Fd "$DB_NAME" > /dev/null
+echo "Run data migration scripts and compare schemas."
+
+# pg_dump and schema names with capital letters
+echo "Specify schema names with capital leters like": "\"eXample\""
