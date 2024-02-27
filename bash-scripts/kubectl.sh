@@ -149,3 +149,42 @@ kubectl get namespaces
 
 # aws eks node logs
 kubectl exec -it aws-node-9cwkd -n kube-system -- /bin/bash cat /host/var/log/aws-routed-eni/ipamd.log
+
+# Update main Kubernetes manifests and PODs
+# updating config files, example:
+sudo nano /etc/kubernetes/scheduler.conf # here there are many config files critical to k8s
+# then on master nodes you can edit the live manifests:
+sudo nano /etc/kubernetes/manifests/kube-apiserver.yaml # updates in Kubernetes are done in 3-4 seconds
+sudo nano /etc/kubernetes/manifests/kube-controller-manager.yaml
+sudo rm /etc/kubernetes/*.old && sudo rm /etc/kubernetes/*~
+
+# Certificates expired: x509: certificate has expired or is not yet valid
+kubeadm certs check-expiration
+kubeadm certs renew all
+systemctl restart kubelet
+# now go to /etc/kubernetes and copy the client-certificate-data and client-key-data values from the file admin.conf
+
+# Work with apiservices
+kubectl get apiservice --all-namespaces
+kubectl get apiservice v1beta1.external.metrics.k8s.io -o yaml
+kubectl describe apiservice v1beta1.metrics.k8s.io -n kube-system
+kubectl edit apiservice v1beta1.metrics.k8s.io -n kube-system
+kubectl get --raw='/readyz?verbose' # test api services
+
+# Debug container with busybox
+kubectl run -it --rm --restart=Never busybox --image=gcr.io/google-containers/busybox sh
+
+# Check metrics reporting for a node
+kubectl get --raw /api/v1/nodes/NODE_NAME/proxy/metrics/resource
+
+# Metrics server certificates error from k8s api service
+# Reference: https://github.com/kubernetes-sigs/metrics-server/issues/576
+kubectl get cm -n kube-system extension-apiserver-authentication -o json | jq -r ".data[\"client-ca-file\"]" | openssl x509 > ../client-ca.pem
+openssl verify -verbose -CAfile client-ca.pem  master-4-cluster1682686205-chain.pem
+verification failed
+kubectl edit cm -n kube-system kubelet-config # set serverTLSBootstrap: true so kubelet is providing certificates
+sudo kubeadm upgrade node phase kubelet-config # on each node
+sudo systemctl restart kubelet.service # on each node
+kubectl get csr -n kube-system # get certificates requests
+kubectl certificate approve ... # approve certificates
+
