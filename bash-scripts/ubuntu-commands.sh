@@ -180,3 +180,23 @@ ulimit -n 65536 && echo 'fs.file-max=65535' | sudo tee -a /etc/sysctl.conf && su
 mc alias set sds-minio-dev https://minio-dev.soliddistributedsystems.io/ AccessKeyId AccessKeySecret
 mc admin info sds-minio-dev
 mc cp --recursive ~/test.file sds-minio-dev/test-data/
+
+# Routing related - checking and updating routes
+# activate modules
+sudo modprobe ip6table_filter -v
+sudo modprobe xt_socket -v
+sudo modprobe iptable_raw -v
+sudo modprobe iptable_nat -v
+sudo modprobe iptable_filter -v
+sudo modprobe iptable_mangle -v
+# install tracert
+sudo apt install traceroute -y
+# check routing table
+netstat -rn
+route -n
+# check route to IP or DNS name
+traceroute IP/DNS_NAME
+# check with a protocol
+traceroute -I ICMP IP/DNS_NAME
+# check cilium BGP routes
+cilium bgp routes
