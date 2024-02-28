@@ -188,3 +188,6 @@ sudo systemctl restart kubelet.service # on each node
 kubectl get csr -n kube-system # get certificates requests
 kubectl certificate approve ... # approve certificates
 
+# Cilium related
+k annotate gateway gw-name  cert-manager.io/cluster-issuer=letsencrypt-cluster-issuer -n namespace
+k describe Gateway gw-name -n namespace

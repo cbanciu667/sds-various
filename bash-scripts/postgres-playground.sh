@@ -4,7 +4,15 @@ echo 'Some Postgres related commands:'
 
 # Kubernetes PG:
 # run "echo $POSTGRES_PASSWORD" on the Postgres POD
-
+# Reset Bitnami container postgres user
+kubectl exec -i -t -n dev postgres-dev-postgresql-0 -c postgresql -- sh
+sed -ibak 's/^\([^#]*\)md5/\1trust/g' /opt/bitnami/postgresql/conf/pg_hba.conf
+pg_ctl reload
+psql -U postgres
+postgres=# alter user postgres with password 'NEW_PASSWORD';
+postgresl=# \q
+sed -i 's/^\([^#]*\)trust/\1md5/g' /opt/bitnami/postgresql/conf/pg_hba.conf
+pg_ctl reload
 
 # Install pg_dump. Example:
 sudo apt install dirmngr ca-certificates software-properties-common apt-transport-https lsb-release

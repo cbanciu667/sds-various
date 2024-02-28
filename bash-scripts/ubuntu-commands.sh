@@ -200,3 +200,4 @@ traceroute IP/DNS_NAME
 traceroute -I ICMP IP/DNS_NAME
 # check cilium BGP routes
 cilium bgp routes
+cilium bgp peers
