@@ -191,3 +191,5 @@ kubectl certificate approve ... # approve certificates
 # Cilium related
 k annotate gateway gw-name  cert-manager.io/cluster-issuer=letsencrypt-cluster-issuer -n namespace
 k describe Gateway gw-name -n namespace
+k -n kube-system rollout restart deployment/cilium-operator
+k -n kube-system rollout restart ds/cilium
