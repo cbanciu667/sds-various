@@ -43,7 +43,7 @@ brew leaves | xargs brew desc --eval-all
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 brew install argocd aws-sam-cli azure-cli ansible bzip2 curl dapr-cli gcc git git-lfs gnupg go google-cloud-sdk gawk \
      guile helm htop jq terraform terraform-ls iamlive kubernetes-cli krew kubeseal kustomize libffi make jwt-cli node nano openjdk openvpn pyenv \
-     redis rust sops tektoncd-cli terragrunt telnet tree watch eksctl wget wakeonlan yarn yq zlibzsh-syntax-highlighting
+     redis rust sops tektoncd-cli terragrunt telnet tree watch eksctl wget wakeonlan yarn yq zlibzsh-syntax-highlighting kubeconform
 brew update && brew upgrade
 # list installed apps
 ls -lah /Applications

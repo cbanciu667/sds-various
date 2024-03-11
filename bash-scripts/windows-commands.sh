@@ -18,7 +18,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 choco feature enable -n=allowGlobalConfirmation
 
 6. Install tools:
-choco install dotnet python terraform awscli awssamcli awstools.powershell awscli-session-manager terragrunt git git-lfs vscode argocd-cli kubernetes-cli kubernetes-helm argocd-cli lens gpg4win putty
+choco install dotnet python terraform awscli awssamcli awstools.powershell awscli-session-manager terragrunt git git-lfs vscode argocd-cli kubernetes-cli kubernetes-helm argocd-cli lens gpg4win putty kubeconform
 
 7. Configure ssh credentials by adding ssh key to .ssh , aws cli credentials aws --configure and kubectl credentials
 
