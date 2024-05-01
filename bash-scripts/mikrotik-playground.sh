@@ -152,3 +152,16 @@ add list=blacklist address=3.3.0.0/16
 /ip service set www-ssl certificate=fullchain1.pem_0
 /ip service set api-ssl certificate=fullchain1.pem_0
 # Choose cert.pem in the services area
+
+# Upgrades and post checks
+/system routerboard settings set auto-upgrade=yes
+/system package update set channel=stable
+/system package update check-for-updates
+/system package update install
+/system routerboard print
+/system routerboard upgrade
+/system reboot
+/system/health/print
+/system/routerboard/print
+/log print without-paging
+/quit

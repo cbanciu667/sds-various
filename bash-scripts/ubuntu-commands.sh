@@ -201,3 +201,14 @@ traceroute -I ICMP IP/DNS_NAME
 # check cilium BGP routes
 cilium bgp routes
 cilium bgp peers
+
+# Upgrade to 24.04 LTS from 20.04 LTS
+sudo nano /etc/update-manager/release-upgrades
+Set Prompt=normal
+sudo do-release-upgrade -d
+sudo reboot
+# This will get you 23.10 release and reboot the system
+sudo nano /etc/update-manager/release-upgrades
+Prompt=lts
+sudo do-release-upgrade -d
+# This will upgrade from 23.10 to 24.04 LTS

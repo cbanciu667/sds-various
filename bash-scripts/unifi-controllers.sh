@@ -43,3 +43,15 @@ echo 'docker compose for running the latest unifi controller:'
 echo 'connecting:'
 # ssh ubnt@$device-IP
 # set-inform https://localhost:8443
+
+# MongoDB
+mongosh "mongodb://127.0.0.1:27017/unifi" --username unifi --authenticationDatabase admin
+db.grantRolesToUser("unifi",["readWrite" ,{ role: "dbOwner", db: "unifi_stat"}])
+db.createUser({
+    user: "username",
+    pwd: "psw",  // replace with a secure password
+    roles: [{role: "dbOwner", db: "unifi_stat"}]
+  })
+  db.grantRolesToUser("unifi",["readWrite" ,{ role: "dbOwner", db: "unifi_stat"}])
+show dbs
+db.user.insert({name: "Ada Lovelace", age: 205})

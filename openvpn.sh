@@ -22,9 +22,15 @@ sudo cp /home/myuser/easy-rsa/pki/issued/vpnsrv.crt /etc/openvpn/server/
 sudo cp /home/myuser/easy-rsa/pki/ca.crt /etc/openvpn/server/
 sudo cp ta.key /etc/openvpn/server/
 
+# revocation list for OpenVPN clients
+./easyrsa revoke client_name
+./easyrsa gen-crl
+sudo cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/
+sudo systemctl restart openvpn-server@server.service
+
 sudo nano /etc/openvpn/server/server.conf
-port 1399
-proto udp
+tcp 449
+proto tcp
 dev tun
 ca ca.crt
 cert vpnsrv.crt
@@ -36,7 +42,6 @@ push "route 10.101.101.0 255.255.240.0"
 ; socket-flags TCP_NODELAY  # if using TCP, uncomment this to reduce latency
 float                       # accept authenticated packets from any IP to allow clients to roam
 keepalive 10 60             # send keepalive pings every 10 seconds, disconnect clients after 60 seconds of no traffic
-opt-verify                  # reject clients with mismatched settings
 user nobody
 group nogroup
 persist-key                 # keep the key in memory, don't reread it from disk
@@ -44,7 +49,6 @@ persist-tun                 # keep the virtual network device open between resta
 tls-version-min 1.3
 tls-version-max 1.3         # use the highest available TLS version, you can add "or-highest" after 1.3
 cipher AES-128-GCM          # data channel cipher
-ncp-disable                 # don't negotiate ciphers, we know what we want
 # TLS 1.3 encryption settings - USE ONLY TLS 1.3
 tls-ciphersuites TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256
 dh none                     # disable static Diffie-Hellman parameters since we're using ECDHE
@@ -59,6 +63,8 @@ log-append  /var/log/openvpn/openvpn.log
 verb 4
 mute 20
 explicit-exit-notify 1
+# client-cert-not-required
+plugin /usr/lib/aarch64-linux-gnu/openvpn/plugins/openvpn-plugin-auth-pam.so login
 
 sudo nano /etc/sysctl.conf
 add:
@@ -89,8 +95,8 @@ cp ca.crt ta.key sds-host.crt sds.host  /etc/client/
 
 nano /etc/openvpn/client.conf
 client
-proto udp
-port 1399
+proto tcp
+port 449
 remote vpn.domain.com
 dev tun
 ca ca.crt
