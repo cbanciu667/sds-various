@@ -55,3 +55,13 @@ db.createUser({
   db.grantRolesToUser("unifi",["readWrite" ,{ role: "dbOwner", db: "unifi_stat"}])
 show dbs
 db.user.insert({name: "Ada Lovelace", age: 205})
+
+# unifi AP SSH commands
+info	# info	Displays device information
+set-default	# set-default	Factory reset device
+set-inform	# set-inform http://192.168.1.1:8080/inform	Set URL of the controller for adoption.
+upgrade	# upgrade https://<firmware-url>.bin	Upgrade firmware
+fwupdate	# fwupdate --url https://<firmware-url>.bin	Update firmware
+reboot	# reboot	Reboot the device
+poweroff	# poweroff	Shutdown device
+uptime	# uptime	shows device uptime
