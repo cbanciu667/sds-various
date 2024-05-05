@@ -141,11 +141,7 @@ kubectl auth can-i --list --as=system:serviceaccount:dev:aws-data-processing-sa 
 kubectl -n dev port-forward svc/mongodb-mongodb-dev 27017:27017
 
 # fix namespace stuck in termination
-kubectl get namespace ${NAMESPACE} -o json > tmp.json
-nano tmp.json and remove finalizers kubernetes
-kubectl proxy (in separate tab)
-curl -k -H "Content-Type: application/json" -X PUT --data-binary @tmp.json http://127.0.0.1:8001/api/v1/namespaces/monitoring/finalize
-kubectl get namespaces
+NS=`kubectl get ns |grep Terminating | awk 'NR==1 {print $1}'` && kubectl get namespace "$NS" -o json | tr -d "\n" | sed "s/\"finalizers\": \[[^]]\+\]/\"finalizers\": []/" | kubectl replace --raw /api/v1/namespaces/$NS/finalize -f -
 
 # aws eks node logs
 kubectl exec -it aws-node-9cwkd -n kube-system -- /bin/bash cat /host/var/log/aws-routed-eni/ipamd.log
