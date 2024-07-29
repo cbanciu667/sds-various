@@ -60,3 +60,6 @@ echo "Run data migration scripts and compare schemas."
 
 # pg_dump and schema names with capital letters
 echo "Specify schema names with capital leters like": "\"eXample\""
+
+# list dbs
+SELECT datname FROM pg_database;
