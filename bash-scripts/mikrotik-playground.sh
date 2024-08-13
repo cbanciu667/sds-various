@@ -165,3 +165,6 @@ add list=blacklist address=3.3.0.0/16
 /system/routerboard/print
 /log print without-paging
 /quit
+
+# print defaults
+/system default-configuration print
