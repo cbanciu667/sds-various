@@ -212,3 +212,21 @@ sudo nano /etc/update-manager/release-upgrades
 Prompt=lts
 sudo do-release-upgrade -d
 # This will upgrade from 23.10 to 24.04 LTS
+
+
+# SMB
+[TimeMachine]
+path = /home/username/folder
+valid users = username
+read only = no
+vfs objects = catia fruit streams_xattr
+fruit:aapl = yes
+fruit:time machine = yes
+
+sudo systemctl restart smbd  
+sudo smbpasswd -a username
+sudo chown -R username:username /home/cbanciu/timemachine
+sudo chmod -R 770 /home/username/timemachine
+
+sudo tail -f /var/log/samba/log.smbd
+sudo tail -f /var/log/syslog 

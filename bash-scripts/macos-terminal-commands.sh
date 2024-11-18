@@ -47,3 +47,12 @@ brew install argocd aws-sam-cli azure-cli ansible bzip2 curl dapr-cli gcc git gi
 brew update && brew upgrade
 # list installed apps
 ls -lah /Applications
+
+# restart audi daemon
+sudo kill -9 `ps ax|grep 'coreaudio[a-z]' | awk '{print $1}'`
+
+# Disable .DS_Store files creation
+defaults write com.apple.desktopservices DSDontWriteNetworkStores true
+sudo defaults write com.apple.desktopservices DSDontWriteNetworkStores true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+sudo defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
