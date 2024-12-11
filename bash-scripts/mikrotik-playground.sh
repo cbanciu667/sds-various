@@ -168,3 +168,9 @@ add list=blacklist address=3.3.0.0/16
 
 # print defaults
 /system default-configuration print
+
+# Traffic via Bridge not affected by FW rules - solution
+/interface bridge settings set use-ip-firewall=yes
+/interface bridge settings set use-ip-firewall-for-vlan=yes
+# check with
+/interface bridge settings print
