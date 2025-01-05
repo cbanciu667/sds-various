@@ -174,3 +174,9 @@ add list=blacklist address=3.3.0.0/16
 /interface bridge settings set use-ip-firewall-for-vlan=yes
 # check with
 /interface bridge settings print
+
+# Open ports to FTP server
+/ip firewall nat add chain=dstnat protocol=tcp dst-port=21 action=dst-nat to-addresses=LAN_SERVER_IP to-ports=21
+/ip firewall nat add chain=dstnat protocol=tcp dst-port=55536-55899 action=dst-nat to-addresses=LAN_SERVER_IP
+/ip firewall filter add chain=forward protocol=tcp dst-port=21 action=accept
+/ip firewall filter add chain=forward protocol=tcp dst-port=55536-55899 action=accept
