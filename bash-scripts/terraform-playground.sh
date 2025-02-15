@@ -36,3 +36,6 @@ terraform state mv 'module.db_dev[0].module.db_subnet_group.aws_db_subnet_group.
 terraform state rm 'module.s3["test"].module.db_deployments.aws_s3_bucket.this[0]'
 
 # You can pass in a value for each variable by setting environment variables called TF_VAR_VAR-NAME
+
+# find and delete terraform lock files
+find . -type f -name ".terraform.lock.hcl" -exec rm -f {} +
