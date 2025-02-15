@@ -63,3 +63,18 @@ echo "Specify schema names with capital leters like": "\"eXample\""
 
 # list dbs
 SELECT datname FROM pg_database;
+
+# Using a DBLINK
+CREATE EXTENSION dblink;
+
+SELECT symbol, date, revenue
+FROM dblink(
+    'dbname=mydb host=mydb.myhost.com user=mydbuser password=myexamplepsw',
+    'SELECT symbol, date, revenue 
+     FROM "normalized".example_table
+     LIMIT 1'
+) AS remote_table(
+    symbol TEXT,
+    date DATE,
+    revenue NUMERIC
+);

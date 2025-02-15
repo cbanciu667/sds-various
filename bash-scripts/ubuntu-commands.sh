@@ -39,7 +39,11 @@ watch "du -skh /your-directory"
 nohup wget site.com/file.zi
 nohup bash -c "(time bash executeScript 1 input fileOutput > scrOutput) &> timeUse.txt" &
 # or use hapless: 
-curl -i https://bmwlog.pp.ua/hapless-easily-run-and-manage-background-processes/watch 
+curl -i https://bmwlog.pp.ua/hapless-easily-run-and-manage-background-processes/watch
+# curl with insecure parameter and hostname passing in header for ALBs
+curl -X GET 'https://foreign-dns-name.com/v1/meta/health' \
+     -H 'Host: actual-alb-domain-name.com' \
+     --insecure
 
 hdparm -I /dev/sda
 hdparm -T /dev/sda1
@@ -191,6 +195,8 @@ sudo modprobe iptable_filter -v
 sudo modprobe iptable_mangle -v
 # install tracert
 sudo apt install traceroute -y
+# check opened ports
+nc -zv localhost 22
 # check routing table
 netstat -rn
 route -n
