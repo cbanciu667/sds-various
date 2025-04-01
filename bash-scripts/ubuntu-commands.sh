@@ -88,8 +88,7 @@ find /<directory> -newermt "-24 hours" -ls
 find /u01/elasticsearch -type f -size +1000000k -exec ls -lh {} \; | awk '{ print $9 ":" $5 }'
 find . -type f -name '*.md' | while read f; do mv "$f" "${f%.txt}"; done
 find . -type f -exec du -h {} + | sort -hr # order files by size in a folder and its subfolders
-
-ls | grep plugins | xargs rm -rf
+find . -type f -name output.log -exec sh -c 'dir=$(dirname "{}"); [ "$(ls -1A "$dir" | wc -l)" -eq 1 ] && echo "$dir"' \; # find folder with only one file 
 
 du -ah /* 2>/dev/null | sort -rh | head -n 10
 

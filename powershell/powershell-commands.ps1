@@ -64,3 +64,15 @@ Get-NetIPAddress | Where-Object { $_.AddressFamily -eq "IPv4" -and $_.InterfaceA
 
 # Get Powershell version
 $PSVersionTable.PSVersion
+
+# Hyper-V relared
+Get-VM | ForEach-Object {
+    $vm = $_
+    $vmId = $vm.Id.Guid
+    [PSCustomObject]@{
+        Name = $vm.Name
+        VMID = $vmId
+    }
+}
+
+Get-VM | Select-Object Name, ConfigurationLocation
