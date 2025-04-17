@@ -35,6 +35,9 @@ pg_dump -h DB_DNS -U DB_USER -d DB_NAME -j 15 -Z 0 -O -x -F d -f FILE_NAME
 pg_restore -h DB_DNS -U DB_USER -d DB_NAME -j 15 -O -x -Fd ./DIR_NAME >/dev/null 2>%1
 pg_restore -h DB_DNS -U DB_USER -d DB_NAME -j 15 -O -x -F d /path/to/DB_NAME
 pg_restore -h DB_DNS -U DB_USER -d DB_NAME -j 15 -O -x -F d /path/to/DB_NAME >/dev/null 2>&1
+# example for firefly db migration
+pg_dump -h old_host -U your_user -d fireflydb -F c -f /path/to/firefly_backup.dump
+pg_restore -h new_host -U your_user -d fireflydb -F c /path/to/firefly_backup.dump
 
 
 # AWS import/export features
