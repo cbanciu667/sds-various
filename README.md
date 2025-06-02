@@ -2,5 +2,5 @@
 
 - Scripts   
 - Dockerfiles   
-- Useful guides
-- Tools and commands
+- Guides
+- Tools and commands   
