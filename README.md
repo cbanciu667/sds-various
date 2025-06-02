@@ -1,3 +1,6 @@
-*SDS Various files*
+*Solid Distributed Systems - useful DevOps library*
 
-Various scripts and other public files.   
+- Scripts   
+- Dockerfiles   
+- Useful guides
+- Tools and commands

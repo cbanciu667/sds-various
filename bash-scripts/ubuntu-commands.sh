@@ -230,7 +230,7 @@ fruit:time machine = yes
 
 sudo systemctl restart smbd  
 sudo smbpasswd -a username
-sudo chown -R username:username /home/cbanciu/timemachine
+sudo chown -R username:username /home/homefolder/timemachine
 sudo chmod -R 770 /home/username/timemachine
 
 sudo tail -f /var/log/samba/log.smbd

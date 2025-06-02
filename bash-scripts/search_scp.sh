@@ -2,7 +2,7 @@
 
 # Permission to search for
 PERMISSION="PutBucketNotification"
-PROFILE="ailylabs"  # AWS CLI Profile
+PROFILE="MYAWSPROFILE"  # AWS CLI Profile
 
 # List all SCPs and extract their IDs
 scp_ids=$(aws organizations list-policies --filter "SERVICE_CONTROL_POLICY" --query 'Policies[*].Id' --output text --profile $PROFILE)

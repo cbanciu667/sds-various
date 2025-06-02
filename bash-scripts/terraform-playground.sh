@@ -26,7 +26,7 @@ terraform import -var-file="../parameters/$PROJECT/$MODULE.tfvars" --var "projec
 # terrform debugging
 TF_LOG=DEBUG terraform plan
 export GODEBUG=asyncpreemptoff=1
-export TF_LOG_PATH=/home/cosmin/tf.log
+export TF_LOG_PATH=/home/homeuser/tf.log
 
 # move resources
 terraform state mv 'module.db_dev[0].module.db_parameter_group.aws_db_parameter_group.this[0]'  'module.rds-db-1[0].module.db.module.db_parameter_group.aws_db_parameter_group.this[0]'
