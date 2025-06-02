@@ -6,5 +6,5 @@
 #         addresses: [8.8.8.8, 8.8.4.4]
 
 netplan apply --debug
-systemctl resart systemd-resolved
+systemctl restart systemd-resolved
 systemd-resolve --status
